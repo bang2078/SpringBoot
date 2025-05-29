@@ -1,0 +1,139 @@
+/* Calm Mint & Deep Blue - 테크 감성 스타일 */
+
+body {
+  font-family: 'Noto Sans KR', 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom right, #f0fdfb, #e0f7fa);
+  color: #1a2c3b;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  color: #00796b;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.container {
+  width: 66.666%;  /* 화면의 2/3 */
+  margin: 48px auto;
+  padding: 40px;
+  background-color: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid #dcedc8;
+  text-align: center;
+  font-size: 15px;
+  color: #37474f;
+}
+
+th {
+  background: #e0f2f1;
+  color: #00796b;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+tr:hover {
+  background: #f1f8e9;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #b2dfdb;
+  border-radius: 8px;
+  background: #f9fdfc;
+  font-size: 15px;
+  transition: border-color 0.2s ease;
+  color: #37474f;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #26a69a;
+  box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.2);
+}
+
+button,
+input[type="submit"] {
+  background: #009688;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover,
+input[type="submit"]:hover {
+  background: #00796b;
+}
+
+a {
+  color: #00796b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #004d40;
+  text-decoration: underline;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: #00695c;
+  font-weight: 500;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.main-wrap {
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .container {
+    padding: 28px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 20px 16px;
+  }
+}

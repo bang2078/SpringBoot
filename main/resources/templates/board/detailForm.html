@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상세</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+
+  <style>
+    #comment-list {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .comment {
+      padding: 4px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .comment-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap; /* 줄이 너무 길면 다음 줄로 */
+    }
+
+    .comment-name {
+      font-weight: bold;
+    }
+
+    .comment-time {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .comment-content {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 40%; /* 내용이 너무 길면 생략 (...) */
+    }
+
+    .comment-btn {
+      padding: 2px 6px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h3>상세</h3>
+  <form th:action="@{/boards/{id}/delete(id=${detailForm.boardId})}" method="get">
+    <div><label for="">게시판번호</label><input type="text" name="boardId" id="boardId" th:value="${detailForm.boardId}" readonly></div>
+    <div><label for="">제목</label><input type="text" name="title" th:value="${detailForm.title}" readonly></div>
+    <div><label for="">내용</label><input type="text" name="content" th:value="${detailForm.content}"readonly></div>
+    <div><label for="">작성자</label><input type="text" name="author" th:value="${detailForm.author}" readonly></div>
+    <div><label for="">작성날짜</label><input type="text" name="createdDate" th:value="${detailForm.createdDate}" readonly></div>
+    <div><label for="">수정날짜</label><input type="text" name="modifiedDate" th:value="${detailForm.modifiedDate}" readonly></div>
+    <div>
+      <button type="button" id="btnUpdate">수정</button>
+      <button type="submit" id="btnDelete">삭제</button>
+      <button type="button" id="btnFindAll">목록</button>
+    </div>
+  </form>
+
+  <div id="comments-section">
+    <h4>댓글</h4>
+    <div id="comment-list"></div>
+
+    <div>
+      <input type="text" id="comment-name" placeholder="이름" />
+      <textarea id="comment-content" placeholder="댓글 내용"></textarea>
+      <button id="comment-submit">댓글 등록</button>
+    </div>
+
+    <div id="comment-pagination"></div>
+  </div>
+</div>
+  <script th:inline="javascript">
+    const boardId = [[${detailForm.boardId}]];
+  </script>
+
+  <script type="module">
+    import { ajax, PaginationUI } from '/js/comment.js';
+
+    const $commentList = document.getElementById('comment-list');
+    const $pagination = new PaginationUI('comment-pagination', fetchComments);
+    const $btnSubmit = document.getElementById('comment-submit');
+
+    async function fetchComments(page = 1) {
+      const data = await ajax.get(`/api/comments/paging?pid=${boardId}&pageNo=${page}&numOfRows=10`);
+      if (!data) {
+        console.error("댓글 데이터를 불러오지 못했습니다.");
+        return;
+      }
+      renderComments(data.body);
+      $pagination.setTotalRecords(data.paging.totalCount);
+      $pagination.render();
+    }
+
+    function renderComments(comments) {
+      $commentList.innerHTML = '';
+      comments.forEach(comment => {
+        const $div = document.createElement('div');
+        $div.className = 'comment';
+        $div.innerHTML = `
+          <p><strong>${comment.name}</strong> (${new Date(comment.createTime).toLocaleString()})</p>
+          <p>${comment.content}</p>
+          <button onclick="editComment(${comment.commentId})">수정</button>
+          <button onclick="deleteComment(${comment.commentId})">삭제</button>
+        `;
+        $commentList.appendChild($div);
+      });
+    }
+
+    $btnSubmit.addEventListener('click', async () => {
+      const name = document.getElementById('comment-name').value.trim();
+      const content = document.getElementById('comment-content').value.trim();
+      if (!name || !content) return alert('이름과 내용을 입력하세요.');
+
+      await ajax.post('/api/comments', { boardId, name, content });
+      fetchComments();
+    });
+
+    window.deleteComment = async function(commentId) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      await ajax.delete(`/api/comments/${commentId}`);
+      fetchComments();
+    };
+
+    window.editComment = async function(commentId) {
+      const newContent = prompt('수정할 내용을 입력하세요:');
+      if (!newContent) return;
+      await ajax.patch(`/api/comments/${commentId}`, { content: newContent });
+      fetchComments();
+    };
+
+    fetchComments();
+  </script>
+</body>
+</html>
